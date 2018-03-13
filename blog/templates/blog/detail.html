@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block main %}
+    <article class="post post-{{article.id}}">
+        <header class="entry-header">
+            <h1 class="entry-title">
+                <!-- get_absolute_url方法（定义在 Article 类中）返回的是article所对应的URL，-->
+                <a href="{{article.get_absolute_url}}">{{article.title}}</a>
+            </h1>
+            <div class="entry-meta2">
+                <span class="post-category"><a href="#"><i class="fa fa-list-alt" aria-hidden="true"></i> {{article.category}}</a></span>
+                <span class="post-date"><a href="#"><time class="entry-date"
+                            datetime="{{ article.time }}"><i class="fa fa-calendar" aria-hidden="true"></i> {{ article.time }}</time></a></span>
+                <span class="post-author"><a href="#"><i class="fa fa-user-circle" aria-hidden="true"></i> {{ article.author }}</a></span>
+                <span class="comments-link"><a href="#"><i class="fa fa-comment" aria-hidden="true"></i> {{ article.comment_set.count }}<a></span>
+                <span class="views-count"><a href="#"><i class="fa fa-paw" aria-hidden="true"></i> {{ article.views }}</a></span>
+            </div>
+        </header>
+        <div class="entry-content clearfix">
+            <p>{{article.content|safe}}</p>
+        </div>
+        </article>
+    <div class="comment">
+        <h4 class="fabiao">发表留言:</h4>
+        <form action="{% url 'comments:article_comment' article.pk %}" method="post" class="comment-form">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6">
+              <label for="{{ form.name.id_for_label }}">姓名：</label>
+              {{ form.name }}
+              {{ form.name.errors }}
+            </div>
+            <div class="col-md-12">
+              <label for="{{ form.text.id_for_label }}">留言：</label>
+              {{ form.text }}
+              {{ form.text.errors }}
+              <button type="submit" class="comment-btn">发表</button>
+            </div>
+          </div>    <!-- row -->
+        </form>
+        <ul class="comment-list list-unstyled">
+          {% for comment in comment_list %}
+          <li class="comment-item">
+            <span class="nickname">{{ comment.name }}</span>
+            <time class="submit-date">{{ comment.time }}</time>
+            <div class="text">
+              {{ comment.text }}
+            </div>
+          </li>
+          {% empty %}
+          暂无评论
+          {% endfor %}
+        </ul>
+    </div>
+{% endblock main %}
+
+{% block toc %}
+    <div class="widget widget-content">
+        <h3 class="widget-title">文章目录</h3>
+        {{ article.toc|safe }}
+    </div>
+{% endblock toc %}
